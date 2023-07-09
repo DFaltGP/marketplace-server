@@ -8,7 +8,15 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createUserDto: CreateUserDto) {
-    const { email } = createUserDto;
+    const { email, accessName } = createUserDto;
+
+    const access = await this.prisma.access.findMany({
+      where: { name: accessName },
+    });
+
+    if (access.length === 0) {
+      throw new BadRequestException({ message: 'Access does not exists' });
+    }
 
     const emailAlreadyInUse = await this.prisma.user.findUnique({
       where: { email },
@@ -21,14 +29,29 @@ export class UserService {
     const data = {
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
+      Access: {
+        connect: {
+          id: access[0].id,
+        },
+      },
+      accessName: undefined,
     };
 
-    const createdUser = await this.prisma.user.create({ data });
+    const createdUser = await this.prisma.user.create({
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        Access: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
-    return {
-      ...createdUser,
-      password: undefined,
-    };
+    return createdUser;
   }
 
   async findAll() {
@@ -67,12 +90,21 @@ export class UserService {
       where: {
         id,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        address: true,
+        number: true,
+        cep: true,
+        city: true,
+        Access: {
+          select: { name: true },
+        },
+      },
     });
 
-    return {
-      ...updatedUser,
-      password: undefined,
-    };
+    return updatedUser;
   }
 
   async remove(id: string) {
@@ -83,5 +115,6 @@ export class UserService {
     }
 
     await this.prisma.user.delete({ where: { id } });
+    return { message: 'User has been deleted' };
   }
 }

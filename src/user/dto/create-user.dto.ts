@@ -1,7 +1,6 @@
 import { User } from '../entities/user.entity';
 
 import {
-  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -41,9 +40,7 @@ export class CreateUserDto extends User {
   @IsString()
   city: string;
 
-  @IsBoolean()
-  isSeller: boolean;
-
+  @IsNotEmpty()
   @IsString()
-  feedback?: string;
+  accessName: string;
 }

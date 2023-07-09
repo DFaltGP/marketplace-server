@@ -37,6 +37,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
   city?: string;
 
-  @IsOptional()
-  isSeller?: boolean;
+  accessName?: string;
 }
