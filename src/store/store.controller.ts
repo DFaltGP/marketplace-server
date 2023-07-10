@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  Patch,
   Param,
-  // Delete,
+  Delete,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
-// import { UpdateStoreDto } from './dto/update-store.dto';
+import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Controller('store')
 export class StoreController {
@@ -33,13 +33,13 @@ export class StoreController {
     return this.storeService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-  //   return this.storeService.update(id, updateStoreDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
+    return this.storeService.update(id, updateStoreDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.storeService.remove(id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.storeService.remove(id);
+  }
 }
