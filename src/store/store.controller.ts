@@ -1,6 +1,6 @@
 import {
   Controller,
-  // Get,
+  Get,
   Post,
   Body,
   // Patch,
@@ -23,15 +23,15 @@ export class StoreController {
     return this.storeService.create(userId, createStoreDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.storeService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.storeService.findAll();
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.storeService.findOne(id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.storeService.findOne(id);
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {

@@ -31,13 +31,36 @@ export class StoreService {
     return createdStore;
   }
 
-  // findAll() {
-  //   return `This action returns all store`;
-  // }
+  async findAll() {
+    const stores = await this.prisma.store.findMany({
+      select: {
+        id: true,
+        name: true,
+        User: { select: { name: true } },
+      },
+    });
 
-  // findOne(userId: string) {
-  //   return `This action returns a #userId store`;
-  // }
+    return stores;
+  }
+
+  async findOne(id: string) {
+    const store = await this.prisma.store.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        User: { select: { name: true } },
+      },
+    });
+
+    if (!store) {
+      throw new BadRequestException({
+        message: 'Não foi possível encontrar esta loja',
+      });
+    }
+
+    return store;
+  }
 
   // update(userId: string, updateStoreDto: UpdateStoreDto) {
   //   return `This action updates a #userId store`;
