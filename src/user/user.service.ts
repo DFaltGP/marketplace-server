@@ -29,11 +29,7 @@ export class UserService {
     const data = {
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
-      Access: {
-        connect: {
-          id: access[0].id,
-        },
-      },
+      UserAccess: { create: { Access: { connect: { name: accessName } } } },
       accessName: undefined,
     };
 
@@ -43,9 +39,9 @@ export class UserService {
         id: true,
         name: true,
         email: true,
-        Access: {
+        UserAccess: {
           select: {
-            name: true,
+            Access: { select: { name: true } },
           },
         },
       },
@@ -55,10 +51,15 @@ export class UserService {
   }
 
   async findAll() {
-    const users = await this.prisma.user.findMany();
-    users.forEach((user) => {
-      user.password = undefined;
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        UserAccess: { select: { Access: { select: { name: true } } } },
+      },
     });
+
     return users;
   }
 
@@ -98,8 +99,8 @@ export class UserService {
         number: true,
         cep: true,
         city: true,
-        Access: {
-          select: { name: true },
+        UserAccess: {
+          select: { Access: { select: { name: true } } },
         },
       },
     });

@@ -11,8 +11,8 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
+  id         String       @id @default(uuid())
+  email      String       @unique
   name       String
   password   String
   address    String
@@ -20,16 +20,25 @@ model User {
   cep        String
   city       String
   Store      Store[]
-  Access     Access?  @relation(fields: [accessId], references: [id])
-  accessId   String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  UserAccess UserAccess[]
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
 }
 
 model Access {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  UserAccess UserAccess[]
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model UserAccess {
   id         String   @id @default(uuid())
-  name       String   @unique
-  User       User[]
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  Access     Access?  @relation(fields: [accessId], references: [id])
+  accessId   String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
