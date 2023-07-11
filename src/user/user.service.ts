@@ -63,19 +63,9 @@ export class UserService {
     return users;
   }
 
-  // async findByEmail(email: string) {
-  //   const userExists = await this.prisma.user.findUnique({ where: { email } });
-  //   if (!userExists) {
-  //     throw new BadRequestException({ message: 'User does not exists' });
-  //   }
-
-  //   const user = await this.prisma.user.findUnique({ where: { email } });
-
-  //   return {
-  //     ...user,
-  //     password: undefined,
-  //   };
-  // }
+  async findByEmail(email: string) {
+    return await this.prisma.user.findUnique({ where: { email } });
+  }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const userExists = await this.prisma.user.findFirst({ where: { id } });
