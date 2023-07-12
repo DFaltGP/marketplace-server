@@ -9,6 +9,7 @@ import { LocalStrategy } from './strategies/local.strategy';
   imports: [
     UserModule,
     JwtModule.register({
+      // Configura como o JWTModule será importado e como agirá na criação do tokenJwt
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     }),
