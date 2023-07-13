@@ -29,7 +29,7 @@ export class AuthService {
     });
   }
 
-  login(user: User): UserToken {
+  async login(user: User): Promise<UserToken> {
     // Transforma o req.user em um JWT após passar pela estratégia local(header, payload[id, name||email, iat(issued_AT)] e verifySignature)
     const payload: UserPayload = {
       sub: user.id,
@@ -37,7 +37,7 @@ export class AuthService {
       email: user.email,
     };
 
-    const jwtToken = this.jwtService.sign(payload); // serviço de criação do token requer apenas o Payload
+    const jwtToken = await this.jwtService.signAsync(payload); // serviço de criação do token requer apenas o Payload
     return { access_token: jwtToken };
   }
 }
