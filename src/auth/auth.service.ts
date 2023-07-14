@@ -30,7 +30,8 @@ export class AuthService {
   }
 
   async login(user: User): Promise<UserToken> {
-    // Transforma o req.user em um JWT após passar pela estratégia local(header, payload[id, name||email, iat(issued_AT)] e verifySignature)
+    // Transforma o req.user em um JWT após passar
+    // pela estratégia local(header, payload[id, name||email, iat(issued_AT)] e verifySignature)
     const payload: UserPayload = {
       sub: user.id,
       name: user.name,

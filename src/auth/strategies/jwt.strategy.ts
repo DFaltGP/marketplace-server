@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // Assim, a função validate abaixo apenas recebe o param payload do tipo UserPayload e retorna as
   async validate(payload: UserPayload): Promise<UserFromJwt> {
     // Informações do usuário convertidas do payload para de fato User(sub=id,name=name,email=email)
-
     return {
       id: payload.sub,
       email: payload.email,
