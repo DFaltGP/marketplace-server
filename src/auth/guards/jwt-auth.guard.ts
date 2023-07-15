@@ -1,4 +1,5 @@
 // NestJS
+// Valida se o header da requisição possui um tokenJwt válido na aplicação
 import {
   ExecutionContext,
   Injectable,

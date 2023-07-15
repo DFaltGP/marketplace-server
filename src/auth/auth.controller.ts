@@ -16,7 +16,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Public()
   @Post('login')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(LocalAuthGuard)
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);

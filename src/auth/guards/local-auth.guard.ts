@@ -1,3 +1,4 @@
+// Valida se as informações passadas no body na hora do login são válidas e batem com nosso banco de dados
 import {
   ExecutionContext,
   Injectable,
