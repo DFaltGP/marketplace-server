@@ -38,7 +38,8 @@ export class AuthService {
       email: user.email,
     };
 
-    const jwtToken = await this.jwtService.signAsync(payload); // serviço de criação do token requer apenas o Payload
+    const jwtToken = await this.jwtService.signAsync(payload);
+    // serviço de criação do token requer apenas o Payload
     return { access_token: jwtToken };
   }
 }

@@ -21,5 +21,6 @@ export class AppService {
       },
     });
     return authenticatedUser;
+    // Faça as tipagens dos retornos das funções
   }
 }
