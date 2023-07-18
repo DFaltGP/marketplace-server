@@ -10,6 +10,8 @@ import {
 import { AccessService } from './access.service';
 import { CreateAccessDto } from './dto/create-access.dto';
 import { UpdateAccessDto } from './dto/update-access.dto';
+import { Access } from 'src/auth/decorators/access.decorator';
+import { Accessess } from 'src/auth/enums/accessess.enum';
 
 @Controller('access')
 export class AccessController {
@@ -20,6 +22,7 @@ export class AccessController {
     return this.accessService.create(createAccessDto);
   }
 
+  @Access(Accessess.Admnistrador)
   @Get()
   findAll() {
     return this.accessService.findAll();
