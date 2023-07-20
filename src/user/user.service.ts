@@ -3,11 +3,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { CreatedUser } from './models/createdUser';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<CreatedUser> {
     const { email, accessName } = createUserDto;
 
     const access = await this.prisma.access.findMany({
@@ -38,12 +39,6 @@ export class UserService {
       select: {
         id: true,
         name: true,
-        email: true,
-        UserAccess: {
-          select: {
-            Access: { select: { name: true } },
-          },
-        },
       },
     });
 

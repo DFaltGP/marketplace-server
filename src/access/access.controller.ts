@@ -17,6 +17,7 @@ import { Accessess } from 'src/auth/enums/accessess.enum';
 export class AccessController {
   constructor(private readonly accessService: AccessService) {}
 
+  @Access(Accessess.Admnistrador)
   @Post()
   create(@Body() createAccessDto: CreateAccessDto) {
     return this.accessService.create(createAccessDto);
@@ -28,16 +29,19 @@ export class AccessController {
     return this.accessService.findAll();
   }
 
+  @Access(Accessess.Admnistrador)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.accessService.findOne(id);
   }
 
+  @Access(Accessess.Admnistrador)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAccessDto: UpdateAccessDto) {
     return this.accessService.update(id, updateAccessDto);
   }
 
+  @Access(Accessess.Admnistrador)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.accessService.remove(id);
