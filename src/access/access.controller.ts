@@ -22,7 +22,7 @@ export class AccessController {
     return this.accessService.create(createAccessDto);
   }
 
-  @Access(Accessess.Admnistrador)
+  @Access(Accessess.Admnistrador, Accessess.Comprador)
   @Get()
   findAll() {
     return this.accessService.findAll();

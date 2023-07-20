@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UserAccessService } from 'src/user-access/user-access.service';
 import { AuthRequest } from '../models/AuthRequest';
 import { Reflector } from '@nestjs/core';
@@ -29,6 +24,7 @@ export class AccessAuthGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest<AuthRequest>();
 
     const userAccessess = await this.userAccessService.findOne(user.id);
+    console.log(userAccessess, requiredAccessess);
 
     return requiredAccessess.some((access) => {
       return userAccessess.Access.name == access;
