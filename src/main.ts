@@ -7,14 +7,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Documentação com Swagger - Guilherme Pacheco Diniz')
-    .setDescription('Não precisamos de descrição, apenas estude o necessário')
+    .setTitle('Documentação API Marketplace - By Guilherme Pacheco')
+    .setDescription(
+      'Esta API representa algumas informações sobre casos de uso, requisições e controladores',
+    )
     .setVersion('1.0')
-    .addTag('users')
     .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -23,6 +21,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
 }
 bootstrap();
