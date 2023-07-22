@@ -10,17 +10,19 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from '@prisma/client';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post(':storeId')
+  @Post()
   create(
-    @Param('storeId') storeId: string,
+    @CurrentUser() user: User,
     @Body() createProductDto: CreateProductDto,
   ) {
-    return this.productService.create(storeId, createProductDto);
+    return this.productService.create(user, createProductDto);
   }
 
   @Get()

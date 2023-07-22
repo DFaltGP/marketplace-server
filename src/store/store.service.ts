@@ -3,20 +3,31 @@ import { CreateStoreDto } from './dto/create-store.dto';
 // import { UpdateStoreDto } from './dto/update-store.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class StoreService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(userId: string, createStoreDto: CreateStoreDto) {
-    const data = { ...createStoreDto, User: { connect: { id: userId } } };
 
-    const userExists = await this.prisma.user.findUnique({
-      where: { id: userId },
+  async create(user: User, createStoreDto: CreateStoreDto) {
+    const { id } = user;
+
+    const userInfo = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, Store: {} },
     });
 
-    if (!userExists) {
+    if (!userInfo) {
       throw new BadRequestException({ message: 'Usuário inexistente' });
     }
+
+    if (userInfo.Store.length === 1) {
+      throw new BadRequestException({
+        message: 'Este usuário já possui uma loja registrada em seu nome',
+      });
+    }
+
+    const data = { ...createStoreDto, User: { connect: { id } } };
 
     const createdStore = await this.prisma.store.create({
       data,
@@ -53,31 +64,35 @@ export class StoreService {
     return stores;
   }
 
-  async findOne(id: string) {
-    const store = await this.prisma.store.findUnique({
+  async findOne(user: User) {
+    const { id } = user;
+    const userStore = await this.prisma.user.findUnique({
       where: { id },
       select: {
-        id: true,
-        name: true,
-        User: { select: { name: true } },
+        Store: { select: { id: true } },
       },
     });
 
-    if (!store) {
+    if (!userStore) {
       throw new BadRequestException({
         message: 'Não foi possível encontrar esta loja',
       });
     }
 
-    return store;
+    return userStore;
   }
 
-  async update(id: string, updateStoreDto: UpdateStoreDto) {
-    const store = await this.prisma.store.findUnique({
+  async update(user: User, updateStoreDto: UpdateStoreDto) {
+    const { id } = user;
+
+    const userStore = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        Store: { select: { id: true } },
+      },
     });
 
-    if (!store) {
+    if (!userStore.Store[0].id) {
       throw new BadRequestException({
         message: 'Não foi possível encontrar a loja',
       });
@@ -87,7 +102,7 @@ export class StoreService {
 
     const updatedStore = await this.prisma.store.update({
       data,
-      where: { id },
+      where: { id: userStore.Store[0].id },
       select: {
         id: true,
         name: true,
@@ -98,7 +113,7 @@ export class StoreService {
     return updatedStore;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<{ message: string }> {
     const store = await this.prisma.store.findUnique({
       where: { id },
     });

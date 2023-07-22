@@ -51,6 +51,15 @@ export class UserService {
         id: true,
         name: true,
         email: true,
+        Store: {
+          select: {
+            id: true,
+            name: true,
+            Product: {
+              select: { id: true, name: true, price: true, amount: true },
+            },
+          },
+        },
         UserAccess: { select: { Access: { select: { name: true } } } },
       },
     });
@@ -93,7 +102,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<{ message: string }> {
     const userExists = await this.prisma.user.findFirst({ where: { id } });
 
     if (!userExists) {

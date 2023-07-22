@@ -2,27 +2,53 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
-  async create(storeId: string, createProductDto: CreateProductDto) {
-    const storeExists = await this.prisma.store.findUnique({
-      where: { id: storeId },
+  async create(user: User, createProductDto: CreateProductDto) {
+    const { id } = user;
+
+    const userStoreId = await this.prisma.user.findFirst({
+      where: { id },
+      select: { Store: { select: { id: true } } },
     });
 
-    if (!storeExists) {
+    if (userStoreId.Store.length === 0) {
       throw new BadRequestException({
-        message: 'Não foi possível encontrar a loja',
+        message: 'Nenhuma loja atribuida ao usuário atual',
+      });
+    }
+
+    const products = await this.prisma.product.findMany();
+
+    const nameAlreadyInUse = products.some(
+      (product) => createProductDto.name === product.name,
+    );
+
+    if (nameAlreadyInUse) {
+      throw new BadRequestException({
+        message: 'Nome do produto já cadastrado',
       });
     }
 
     const data = {
       ...createProductDto,
-      Store: { connect: { id: storeId } },
+      Store: { connect: { id: userStoreId.Store[0].id } },
     };
 
-    const createdProduct = await this.prisma.product.create({ data });
+    const createdProduct = await this.prisma.product.create({
+      data,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        amount: true,
+        price: true,
+        imageUrl: true,
+      },
+    });
 
     return createdProduct;
   }

@@ -10,34 +10,40 @@ import {
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { Access } from 'src/auth/decorators/access.decorator';
+import { Accessess } from 'src/auth/enums/accessess.enum';
 
 @Controller('store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
-  @Post(':userId')
-  create(
-    @Param('userId') userId: string,
-    @Body() createStoreDto: CreateStoreDto,
-  ) {
-    return this.storeService.create(userId, createStoreDto);
+  @Access(Accessess.Vendedor)
+  @Post()
+  create(@CurrentUser() user: User, @Body() createStoreDto: CreateStoreDto) {
+    return this.storeService.create(user, createStoreDto);
   }
 
-  @Get()
+  @Access(Accessess.Admnistrador)
+  @Get('all')
   findAll() {
     return this.storeService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeService.findOne(id);
+  @Access(Accessess.Vendedor)
+  @Get()
+  findOne(@CurrentUser() user: User) {
+    return this.storeService.findOne(user);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storeService.update(id, updateStoreDto);
+  @Access(Accessess.Vendedor)
+  @Patch()
+  update(@CurrentUser() user: User, @Body() updateStoreDto: UpdateStoreDto) {
+    return this.storeService.update(user, updateStoreDto);
   }
 
+  @Access(Accessess.Admnistrador)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.storeService.remove(id);
