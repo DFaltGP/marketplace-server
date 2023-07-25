@@ -15,10 +15,7 @@ model User {
   email      String       @unique
   name       String
   password   String
-  address    String
-  number     String
-  cep        String
-  city       String
+  Address    Address[]
   Store      Store[]
   UserAccess UserAccess[]
   created_at DateTime     @default(now())
@@ -31,6 +28,18 @@ model Access {
   UserAccess UserAccess[]
   created_at DateTime     @default(now())
   updated_at DateTime     @updatedAt
+}
+
+model Address {
+  id      String  @id @default(uuid())
+  street  String
+  number  String
+  cep     String
+  city    String
+  state   String
+  country String
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }
 
 model UserAccess {
@@ -58,7 +67,7 @@ model Product {
 
 model Store {
   id         String    @id @default(uuid())
-  name       String
+  name       String    @unique
   Product    Product[]
   User       User?     @relation(fields: [userId], references: [id])
   userId     String?

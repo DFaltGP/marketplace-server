@@ -89,10 +89,6 @@ export class UserService {
         id: true,
         name: true,
         email: true,
-        address: true,
-        number: true,
-        cep: true,
-        city: true,
         UserAccess: {
           select: { Access: { select: { name: true } } },
         },
