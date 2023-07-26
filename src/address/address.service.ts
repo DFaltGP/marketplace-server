@@ -57,11 +57,27 @@ export class AddressService {
     return { ...userAddress, userId: undefined };
   }
 
-  update(user: User, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a  address`;
-  }
+  async update(user: User, updateAddressDto: UpdateAddressDto) {
+    const { id } = user;
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+    const userExists = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!userExists) {
+      throw new BadRequestException({ message: 'Usuário não encontrado' });
+    }
+
+    const data = { ...updateAddressDto };
+
+    const userAddressId = await this.prisma.user.findFirst({
+      where: { id },
+      include: { Address: true },
+    });
+
+    const updatedAddress = await this.prisma.address.update({
+      data,
+      where: { id: userAddressId.Address[0].id },
+    });
+
+    return { ...updatedAddress, userId: undefined };
   }
 }
