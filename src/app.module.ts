@@ -12,6 +12,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { UserAccessModule } from './user-access/user-access.module';
 import { AccessAuthGuard } from './auth/guards/access-auth.guard';
 import { AddressModule } from './address/address.module';
+import { SaleModule } from './sale/sale.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AddressModule } from './address/address.module';
     PrismaModule,
     UserAccessModule,
     AddressModule,
+    SaleModule,
   ],
   controllers: [AppController],
   providers: [
@@ -36,6 +38,8 @@ import { AddressModule } from './address/address.module';
     {
       provide: APP_GUARD,
       useClass: AccessAuthGuard,
+      // O guardião de acesso verifica se o usuário autenticado atual possui a permissão necessária
+      // Para realizar a requisição e receber o objeto da resposta
     },
   ],
 })

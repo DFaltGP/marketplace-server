@@ -11,8 +11,6 @@ export class AddressService {
   async create(user: User, createAddressDto: CreateAddressDto) {
     const { id } = user;
 
-    const data = { ...createAddressDto, User: { connect: { id } } };
-
     const userExists = await this.prisma.user.findUnique({ where: { id } });
 
     if (!userExists) {
@@ -26,11 +24,13 @@ export class AddressService {
       select: { Address: {} },
     });
 
-    if (userAlreadyHaveAnAddress.Address.length === 1) {
+    if (userAlreadyHaveAnAddress.Address[0]) {
       throw new BadRequestException({
         message: 'Usuário já possui um endereço cadastrado',
       });
     }
+
+    const data = { ...createAddressDto, User: { connect: { id } } };
 
     const createdAddress = await this.prisma.address.create({ data });
 

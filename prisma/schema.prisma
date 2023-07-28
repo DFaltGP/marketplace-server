@@ -11,23 +11,17 @@ datasource db {
 }
 
 model User {
-  id         String       @id @default(uuid())
-  email      String       @unique
-  name       String
-  password   String
-  Address    Address[]
-  Store      Store[]
-  UserAccess UserAccess[]
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
-}
-
-model Access {
-  id         String       @id @default(uuid())
-  name       String       @unique
-  UserAccess UserAccess[]
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  email          String       @unique
+  password       String
+  name           String
+  Address        Address[]
+  UserAccess     UserAccess[]
+  Store          Store[]
+  Sale_as_buyer  Sale[]       @relation("buyer")
+  Sale_as_seller Sale[]       @relation("seller")
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
 }
 
 model Address {
@@ -42,6 +36,14 @@ model Address {
   userId  String?
 }
 
+model Access {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  UserAccess UserAccess[]
+  created_at DateTime?    @default(now())
+  updated_at DateTime?    @updatedAt
+}
+
 model UserAccess {
   id         String   @id @default(uuid())
   User       User?    @relation(fields: [userId], references: [id])
@@ -52,19 +54,6 @@ model UserAccess {
   updated_at DateTime @updatedAt
 }
 
-model Product {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  price       Float
-  amount      Int
-  imageUrl    String
-  Store       Store?   @relation(fields: [storeId], references: [id])
-  storeId     String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-}
-
 model Store {
   id         String    @id @default(uuid())
   name       String    @unique
@@ -73,4 +62,45 @@ model Store {
   userId     String?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String
+  price       Float
+  amount      Int
+  imageUrl    String
+  Store       Store?        @relation(fields: [storeId], references: [id])
+  storeId     String?
+  SaleProduct SaleProduct[]
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+}
+
+// Tabela para pedidos, relacionando ID de comprador e vendedor 
+
+model Sale {
+  id          String        @id @default(uuid())
+  total       Float
+  Buyer       User?         @relation("buyer", fields: [buyerId], references: [id])
+  buyerId     String?
+  Seller      User?         @relation("seller", fields: [sellerId], references: [id])
+  sellerId    String?
+  SaleProduct SaleProduct[]
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+}
+
+// Tabela que relaciona Produto e quantidade com Venda em específico
+
+model SaleProduct {
+  id         String   @id @default(uuid())
+  quantity   Int
+  Sale       Sale     @relation(fields: [saleId], references: [id])
+  saleId     String
+  Product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

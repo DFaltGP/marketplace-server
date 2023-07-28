@@ -21,7 +21,7 @@ export class StoreService {
       throw new BadRequestException({ message: 'Usuário inexistente' });
     }
 
-    if (userInfo.Store.length === 1) {
+    if (userInfo.Store[0]) {
       throw new BadRequestException({
         message: 'Este usuário já possui uma loja registrada em seu nome',
       });

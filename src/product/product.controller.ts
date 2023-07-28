@@ -12,6 +12,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from '@prisma/client';
+import { Access } from 'src/auth/decorators/access.decorator';
+import { Accessess } from 'src/auth/enums/accessess.enum';
 
 @Controller('product')
 export class ProductController {
@@ -25,9 +27,16 @@ export class ProductController {
     return this.productService.create(user, createProductDto);
   }
 
-  @Get()
+  @Access(Accessess.Admnistrador)
+  @Get('all')
   findAll() {
     return this.productService.findAll();
+  }
+
+  @Access(Accessess.Vendedor)
+  @Get()
+  findAllPerStore(@CurrentUser() user: User) {
+    return this.productService.findByStore(user);
   }
 
   @Get(':id')

@@ -15,7 +15,7 @@ export class ProductService {
       select: { Store: { select: { id: true } } },
     });
 
-    if (userStoreId.Store.length === 0) {
+    if (!userStoreId.Store[0]) {
       throw new BadRequestException({
         message: 'Nenhuma loja atribuida ao usuário atual',
       });
@@ -77,6 +77,38 @@ export class ProductService {
     });
 
     return products;
+  }
+
+  async findByStore(user: User) {
+    const { id } = user;
+
+    const storeOwnerUser = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        Store: {
+          select: {
+            id: true,
+            name: true,
+            Product: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                amount: true,
+                price: true,
+                imageUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!storeOwnerUser) {
+      throw new BadRequestException({ message: 'Usuário não encontrado' });
+    }
+
+    return storeOwnerUser;
   }
 
   async findOne(id: string) {
