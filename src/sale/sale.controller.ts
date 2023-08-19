@@ -1,42 +1,23 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
-import { UpdateSaleDto } from './dto/update-sale.dto';
+import { Access } from 'src/auth/decorators/access.decorator';
+import { Accessess } from 'src/auth/enums/accessess.enum';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from '@prisma/client';
 
 @Controller('sale')
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
+  @Access(Accessess.Comprador)
   @Post()
-  create(@Body() createSaleDto: CreateSaleDto) {
-    return this.saleService.create(createSaleDto);
+  create(@CurrentUser() user: User, @Body() createSaleDto: CreateSaleDto) {
+    return this.saleService.create(user, createSaleDto);
   }
 
   @Get()
   findAll() {
     return this.saleService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.saleService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSaleDto: UpdateSaleDto) {
-    return this.saleService.update(+id, updateSaleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.saleService.remove(+id);
   }
 }
